@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nastavni alati</title>
+<style>
+  :root {
+    --plava: #1e4d8b;
+    --plava-tamna: #163a68;
+    --plava-svijetla: #2f6bb5;
+    --siva: #eef1f6;
+    --border: #dbe2ea;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--siva);
+    background-image: radial-gradient(circle at 15% 0%, #e4ecf9 0%, var(--siva) 45%);
+    margin: 0;
+    padding: 24px;
+    color: #222;
+  }
+  .wrap { max-width: 800px; margin: 60px auto; }
+  h1 {
+    background: linear-gradient(90deg, var(--plava) 0%, var(--plava-svijetla) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    letter-spacing: 0.2px;
+    text-align: center;
+  }
+  .podnaslov {
+    color: #667;
+    margin-bottom: 40px;
+    font-size: 14.5px;
+    text-align: center;
+  }
+  .kartice {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .kartica {
+    flex: 1;
+    min-width: 260px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 26px;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 2px 6px rgba(30, 77, 139, 0.06), 0 8px 24px rgba(30, 77, 139, 0.05);
+    transition: box-shadow 0.2s ease, transform 0.15s ease;
+    display: block;
+  }
+  .kartica:hover {
+    box-shadow: 0 6px 16px rgba(30, 77, 139, 0.14);
+    transform: translateY(-2px);
+  }
+  .kartica .ikona { font-size: 30px; margin-bottom: 12px; display: block; }
+  .kartica h2 {
+    font-size: 17px;
+    color: var(--plava);
+    margin: 0 0 8px 0;
+  }
+  .kartica p {
+    font-size: 13.5px;
+    color: #556;
+    margin: 0;
+    line-height: 1.5;
+  }
+  .strelica {
+    display: inline-block;
+    margin-top: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--plava-svijetla);
+  }
+
+  @media (max-width: 640px) {
+    .wrap { margin: 24px auto; }
+    .kartice { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Nastavni alati</h1>
+  <div class="podnaslov">Alati za generisanje priprema za nastavni čas i diferenciranih nivoa znanja, uz pomoć AI (Groq).</div>
+
+  <div class="kartice">
+    <a class="kartica" href="G_priprema_V6_1.html">
+      <span class="ikona">📘</span>
+      <h2>Priprema za nastavni čas</h2>
+      <p>Generiši kompletnu pripremu za čas prema propisanom obrascu, na osnovu unesenih podataka o predmetu, temi i tipu časa.</p>
+      <span class="strelica">Otvori alat →</span>
+    </a>
+
+    <a class="kartica" href="G_nivoi_znanja_V1_0.html">
+      <span class="ikona">🎯</span>
+      <h2>Nivoi znanja za učenike</h2>
+      <p>Iz generisane pripreme automatski izdvaja sadržaj na tri nivoa težine - niži, srednji i viši (Bloomova taksonomija).</p>
+      <span class="strelica">Otvori alat →</span>
+    </a>
+  </div>
+</div>
+</body>
+</html>
