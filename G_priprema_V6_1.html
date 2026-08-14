@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Priprema za nastavni čas V6.0</title>
+<style>
+  :root {
+    --plava: #1e4d8b;
+    --plava-tamna: #163a68;
+    --plava-svijetla: #2f6bb5;
+    --siva: #eef1f6;
+    --border: #dbe2ea;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--siva);
+    background-image: radial-gradient(circle at 15% 0%, #e4ecf9 0%, var(--siva) 45%);
+    margin: 0;
+    padding: 24px;
+    color: #222;
+  }
+  .wrap { max-width: 950px; margin: 0 auto; }
+  h1 {
+    background: linear-gradient(90deg, var(--plava) 0%, var(--plava-svijetla) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 25px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    letter-spacing: 0.2px;
+  }
+  .podnaslov { color: #667; margin-bottom: 26px; font-size: 14px; }
+
+  .panel {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin-bottom: 22px;
+    box-shadow: 0 2px 6px rgba(30, 77, 139, 0.06), 0 8px 24px rgba(30, 77, 139, 0.05);
+    transition: box-shadow 0.2s ease;
+  }
+  .panel:hover {
+    box-shadow: 0 2px 8px rgba(30, 77, 139, 0.08), 0 10px 28px rgba(30, 77, 139, 0.08);
+  }
+  .panel h2 {
+    font-size: 15px;
+    color: var(--plava);
+    margin-top: 0;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 12px;
+    margin-bottom: 4px;
+    color: #333;
+  }
+  input[type=text], input[type=password], input[type=date], select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    background: #fbfcfe;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+  input[type=text]:hover, input[type=password]:hover, input[type=date]:hover, select:hover {
+    border-color: var(--plava-svijetla);
+  }
+  input[type=text]:focus, input[type=password]:focus, input[type=date]:focus, select:focus {
+    outline: none;
+    border-color: var(--plava);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(30, 77, 139, 0.12);
+  }
+  .red2 { display: flex; gap: 16px; }
+  .red2 > div { flex: 1; }
+  .radio-grupa { display: flex; gap: 18px; margin-top: 6px; font-size: 14px; }
+  .radio-grupa label {
+    display: flex; align-items: center; gap: 6px; font-weight: 400; margin: 0;
+    padding: 6px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .radio-grupa label:hover { border-color: var(--plava-svijetla); background: #f5f9fe; }
+
+  .dugmad { display: flex; gap: 8px; margin-top: 22px; flex-wrap: wrap; }
+  button {
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 16px;
+    font-size: 13.5px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: transform 0.12s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+  button:hover { transform: translateY(-1px); }
+  button:active { transform: translateY(0); }
+  #generisi {
+    background: linear-gradient(135deg, var(--plava) 0%, var(--plava-svijetla) 100%);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(30, 77, 139, 0.28);
+  }
+  #generisi:hover { box-shadow: 0 6px 16px rgba(30, 77, 139, 0.36); }
+  #izvezWord, #izvezi { background: #e8edf5; color: var(--plava); display: none; }
+  #izvezWord:hover, #izvezi:hover { background: #d5deec; box-shadow: 0 3px 10px rgba(30, 77, 139, 0.14); }
+  button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  #pitajAI { background: #1a73e8; color: #fff; }
+  #pitajAI:hover { background: #1557b0; box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3); }
+
+  .napomena {
+    font-size: 12px;
+    color: #778;
+    margin-top: 6px;
+  }
+
+  #status { margin-top: 12px; font-size: 13px; font-weight: 600; }
+  #status.err { color: #b00020; }
+  #status.ok { color: #157a3d; }
+
+  #rezultat-wrap { display: none; }
+  #rezultat {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 32px 42px;
+    line-height: 1.55;
+    font-size: 14.5px;
+    box-shadow: 0 2px 6px rgba(30, 77, 139, 0.06), 0 8px 24px rgba(30, 77, 139, 0.05);
+  }
+  #rezultat h2 {
+    color: var(--plava);
+    font-size: 16px;
+    margin-top: 26px;
+    margin-bottom: 8px;
+    border-bottom: 2px solid var(--plava);
+    padding-bottom: 4px;
+  }
+  #rezultat h2:first-child { margin-top: 0; }
+  #rezultat h3 {
+    font-size: 14.5px;
+    margin-top: 16px;
+    margin-bottom: 6px;
+    color: #333;
+  }
+  #rezultat p { margin: 6px 0; }
+  #rezultat ul, #rezultat ol { margin: 6px 0; padding-left: 22px; }
+  #rezultat strong { color: #111; }
+
+  .spinner {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid #ffffff66;
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: -2px;
+    margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media print {
+    body { background: none; padding: 0; }
+    .panel, .dugmad, #status, h1, .podnaslov { display: none !important; }
+    #rezultat-wrap { display: block !important; }
+    #rezultat { border: none; padding: 0; box-shadow: none; }
+
+    @page {
+      margin: 15mm;
+    }
+
+    .naslov-pripreme {
+      display: block !important;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: var(--plava);
+      margin: 0 0 22px 0;
+    }
+  }
+
+  .naslov-pripreme { display: none; }
+
+  @media (max-width: 640px) {
+    body { padding: 14px; }
+    h1 { font-size: 20px; }
+    .panel { padding: 16px 16px; border-radius: 12px; }
+    .red2 { flex-direction: column; gap: 0; }
+    .radio-grupa { flex-wrap: wrap; gap: 10px; }
+    .dugmad { flex-direction: column; }
+    .dugmad button { width: 100%; }
+    #rezultat { padding: 20px 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Priprema za nastavni čas </h1>
+  <div class="podnaslov">Generisanje nastavnih pripreme za čas prema propisanom obrascu korištenjem platforme Groq AI (Llama 3.3)</div>
+
+  <div class="panel">
+    <h2>🔑 Groq API</h2>
+    <label for="apiKey">Groq API ključ</label>
+    <input type="password" id="apiKey" placeholder="gsk_...">
+    <div class="napomena">Ključ se čuva samo lokalno u  browseru (localStorage) i šalje se isključivo direktno ka Groq serverima.</div>
+  </div>
+
+  <div class="panel">
+    <h2>📘 Osnovni podaci o času</h2>
+    <div class="red2">
+      <div>
+        <label for="predmet">📖 Nastavni predmet</label>
+        <select id="predmet">
+          <option value="Filozofija">Filozofija</option>
+          <option value="Sociologija">Sociologija</option>
+        </select>
+      </div>
+      <div>
+        <label for="razred">🎓 Razred i odjeljenje</label>
+        <select id="razred">
+          <option value="I (Prvi)">I (Prvi)</option>
+          <option value="II (Drugi)">II (Drugi)</option>
+          <option value="III (Treći)">III (Treći)</option>
+          <option value="IV (Četvrti)">IV (Četvrti)</option>
+        </select>
+      </div>
+    </div>
+
+    <label for="tema">🧩 Nastavna tema</label>
+    <input type="text" id="tema" placeholder="npr. Socijalna struktura društva">
+
+    <label for="jedinica">📄 Nastavna jedinica</label>
+    <input type="text" id="jedinica" placeholder="npr. Društvene klase i slojevi">
+
+    <div class="red2">
+      <div>
+        <label for="tipCasa">🏷️ Tip časa</label>
+        <select id="tipCasa">
+          <option>Obrada novog gradiva</option>
+          <option>Ponavljanje i utvrđivanje gradiva</option>
+          <option>Sistematizacija gradiva</option>
+          <option>Ispitivanje i ocjenjivanje učenika</option>
+          <option>Uvodni čas</option>
+          <option>Kombinovani čas sa vježbama</option>
+        </select>
+      </div>
+      <div>
+        <label>Nastava</label>
+        <div class="radio-grupa">
+          <label><input type="radio" name="nastava" value="Redovna" checked> Redovna</label>
+          <label><input type="radio" name="nastava" value="Izborna"> Izborna</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="red2">
+      <div>
+        <label>Trajanje časa</label>
+        <div class="radio-grupa">
+          <label><input type="radio" name="trajanje" value="45 minuta" checked> 45 minuta</label>
+          <label><input type="radio" name="trajanje" value="90 minuta"> 90 minuta</label>
+        </div>
+      </div>
+      <div>
+        <label for="datumRealizacije">📅 Datum realizacije časa</label>
+        <input type="date" id="datumRealizacije">
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>📝 Posebne napomene za pripremu</h2>
+    <div class="radio-grupa" style="flex-direction: column; gap: 8px; align-items: flex-start;">
+      <label><input type="checkbox" id="napDetaljnije" value="Detaljno obradi glavni dio časa - proširi aktivnosti nastavnika i učenika, dodaj više konkretnih primjera i objašnjenja."> Detaljno obradi glavni dio</label>
+      <label><input type="checkbox" id="napPitanja" value="U završnom dijelu časa postavi veći broj pitanja za provjeru ishoda (najmanje 6-8 pitanja)."> Više pitanja u završnom dijelu</label>
+      <label><input type="checkbox" id="napLinkovi" value="U okviru dodatnih/online resursa i priloga navedi konkretne linkove (URL-ove) ka relevantnim sadržajima, video materijalima ili prilozima vezanim za temu, gdje god je to moguće."> Navedi linkove za priloge</label>
+    </div>
+    <label for="napSlobodno">Dodatna napomena (slobodan upis)</label>
+    <input type="text" id="napSlobodno" placeholder="npr. dodaj primjer iz svakodnevnog života, uključi debate metodu...">
+    <div class="napomena">Ako ništa ne označiš niti upišeš, generisaće se standardna priprema prema urneku.</div>
+  </div>
+
+  <div class="dugmad">
+    <button id="generisi" onclick="generisiPripremu()">🌀 Generiši</button>
+    <button id="nastavi" onclick="nastaviGenerisanje()" style="display:none; background:#c77b00; color:#fff;">↻ Nastavi</button>
+    <button id="izvezWord" onclick="izvezUWord()">💾 Word</button>
+    <button id="izvezi" onclick="window.print()">📤 Print/PDF</button>
+    <button id="izvezNivoi" onclick="otvoriNivoeZnanja()" style="display:none; background:#e8edf5; color:var(--plava);">🎯 Nivo znanja</button>
+    <button id="obrisi" onclick="obrisiPripremu()" style="display:none; background:linear-gradient(135deg, #2f6bb5 0%, #1e4d8b 100%); color:#fff;">🆕 Nova priprema</button>
+    <button id="pitajAI" onclick="pitajAI()">🤖 Proširi temu</button>
+  </div>
+  <div id="status"></div>
+
+  <div id="rezultat-wrap">
+    <br>
+    <div class="naslov-pripreme">PRIPREMA ZA NASTAVNI ČAS</div>
+    <div id="rezultat"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+const el = id => document.getElementById(id);
+
+// Učitaj sačuvani API ključ ako postoji
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('groq_api_key');
+  if (saved) el('apiKey').value = saved;
+
+  const danas = new Date().toISOString().split('T')[0];
+  el('datumRealizacije').value = danas;
+});
+
+function danasnjiDatum() {
+  const d = new Date();
+  return d.toLocaleDateString('bs-BA');
+}
+
+function sistemskiPrompt() {
+  return `Ti si iskusan pedagog-metodičar u bosanskoškolskom sistemu. Tvoj zadatak je da napišeš KOMPLETNU pripremu za nastavni čas, striktno prema sljedećem urneku (template), na bosanskom jeziku. Poštuj tačno ovu strukturu, redoslijed i naslove (rimski brojevi i nazivi sekcija moraju ostati isti). Piši stručno, konkretno i primjenjivo, prilagođeno unesenom predmetu, razredu, temi i jedinici. Ne izostavljaj nijednu sekciju.
+
+Vrati odgovor ISKLJUČIVO kao čist HTML fragment (bez <html>, <head>, <body> tagova), koristeći <h2> za rimske naslove sekcija (I - OSNOVNI PODACI, II - LITERATURA, itd.), <h3> za podnaslove (npr. FAZA 1, UVODNI DIO ČASA), <p> za tekst, <strong> za labele poput "Nastavnik:", "Učenici:", i <ul>/<ol> gdje je prirodno (npr. kriteriji uspjeha, ključna pitanja). Bez markdown sintakse, bez tri obrnute kose crte, bez uvodnog teksta prije ili poslije - samo HTML fragment koji počinje sa <h2>I - OSNOVNI PODACI</h2>.
+
+URNEK STRUKTURE:
+
+I - OSNOVNI PODACI
+Naziv i mjesto škole: JU Gimnazija "Meša Selimović" Tuzla
+Ime i prezime nastavnika, zvanje: Nijaz Salimović, prof. filozofije i sociologije
+Nastavni predmet: [popuni]
+Nastava: Redovna/Izborna [popuni prema unosu]
+Razred i odjeljenje: [popuni prema unosu]
+Nastavna tema: [popuni]
+Nastavna jedinica: [popuni]
+Tip časa: [popuni]
+Datum izrade: [danasnji datum]     Datum realizacije: [obavezno upiši tačno onu vrijednost koja je proslijeđena kao "Datum realizacije" u podacima korisnika ispod - NIKAD ne ostavljaj prazno niti piši placeholder]
+Lokacija časa: Učionica 18.     Trajanje: [popuni prema unosu]
+
+II - LITERATURA
+Za učenike: Ako je predmet Sociologija koristi udžbenik: Slavo Kukić, "Sociologija", udžbenik. Ako je predmet Filozofija koristi udžbenik: Ismet Strujo, "Pregled historije filozofije", udžbenik. Za druge predmete predloži odgovarajući standardni udžbenik za taj predmet i razred u BiH školskom sistemu.
+Za nastavnika: [predloži 1-2 stručne reference relevantne za temu]
+
+VAŽNO ZA LITERATURU I AUTORE: Svi predloženi autori udžbenika, stručne literature i dodatnih izvora (uključujući one u sekcijama II i XI) MORAJU biti sa našeg govornog područja (Bosna i Hercegovina, Srbija, Hrvatska, Crna Gora) i pisati na bosanskom/hrvatskom/srpskom jeziku. Ne predlaži strane (npr. engleske, njemačke, američke) autore niti prevedena strana izdanja, osim ako je izričito riječ o domaćem prijevodu koji se standardno koristi u našim školama.
+
+III - KORELACIJA I KOORDINACIJA
+Korelacija sa drugim predmetima: [predloži logične korelacije]
+Prethodna nastavna jedinica: [predloži logičnu prethodnu jedinicu]
+Naredna nastavna jedinica: [predloži logičnu narednu jedinicu]
+
+VAŽNO: Kad god se u korelaciji ili bilo gdje drugo u pripremi spominje maternji/jezički predmet (jezik i književnost), NE koristi nazive kao "Bosanski jezik", "Hrvatski jezik", "Srpski jezik" ili "Maternji jezik" - uvijek koristi isključivo naziv "BHS jezik i književnost".
+
+IV - ISHODI UČENJA
+Na kraju časa učenik/učenica će biti u stanju da:
+Kognitivni ishodi (Razmišljanje i znanje): [konkretno, koristeći glagole: razumije, definiše, razlikuje, analizira, objašnjava, navodi, interpretira, kritikuje]
+Psihomotorički ishodi (Rad i vještine): [konkretno, koristeći glagole: konstruiše, izvodi, prezentuje, crta, primjenjuje, demonstrira]
+Afektivni ishodi (Osjećanja i stavovi): [konkretno, koristeći: prepoznaje vrijednost, uvažava, razvija stav, pokazuje odgovornost, pomaže, prihvata, podržava, cijeni]
+
+V - KRITERIJI USPJEHA
+Učenik je ostvario ishode ako može: [numerisana lista, 3-5 konkretnih, mjerljivih kriterija]
+
+VI - ORGANIZACIONA OSNOVA
+Oblici rada: [npr. frontalni, grupni, individualni, rad u parovima - prilagođeno]
+Nastavne metode: [konkretne metode prilagođene temi]
+Nastavna sredstva: [konkretno]
+Nastavna pomagala: [konkretno]
+Digitalni alati/resursi: internet, AI alati, online platforme, web sites - [dopuni konkretnim prijedlozima relevantnim za temu]
+
+VII - TOK ČASA
+
+A) UVODNI DIO ČASA (7-8 minuta)
+Nastavnik: [konkretna aktivnost - najava, motivacija, uvodno pitanje]
+Učenici: [konkretna aktivnost]
+Očekivani rezultat: [konkretno]
+
+B) GLAVNI DIO ČASA (≈30 minuta)
+Naziv aktivnosti: [naziv]
+Cilj: [konkretno]
+Aktivnosti nastavnika: [detaljno]
+Aktivnosti učenika: [detaljno]
+Materijali: [konkretno]
+Formativno vrednovanje: [konkretno]
+
+VAŽNO: Glavni dio časa mora biti JEDNA CJELINA, bez dijeljenja na Fazu 1/Fazu 2 ili više faza. Cijeli glavni dio traje ≈30 minuta kao jedinstvena aktivnost.
+
+Ključna pitanja za učenike: [numerisana lista, 3 pitanja relevantna za sadržaj]
+
+C) ZAVRŠNI DIO ČASA (≈8 minuta)
+Aktivnost: Sistematizacija (3-4 minute)
+Nastavnik: [konkretno]
+Učenici: [konkretno]
+
+Aktivnost: Provjera ishoda (3-4 minute)
+Nastavnik: [konkretno]
+Učenici: [konkretno]
+
+Aktivnost: Povratna informacija (1 minuta)
+Nastavnik: [konkretno]
+Učenici: [konkretno]
+Očekivani rezultat: [konkretno]
+
+VIII - IZGLED (PLAN) TABLE
+Nastavna jedinica: [naziv jedinice]
+Lijeva strana table: [konkretno]
+Srednji dio table: [konkretno]
+Desna strana table: [konkretno]
+Donji dio table - po potrebi: domaća zadaća: [konkretno]
+
+IX - VREDNOVANJE (po potrebi)
+Formativno vrednovanje (tokom časa):
+Metode i tehnike: (npr. online alati: Wordwall, Quizlet, Kahoot, jedno pitanje, najbrži prst, asocijacije, pogodi pojam) [prilagodi temi]
+Povratna informacija: [konkretno]
+Sumativno vrednovanje (nakon časa/teme):
+Metode: [konkretno]
+Kriteriji ocjenjivanja: [konkretno]
+
+X - DOMAĆA ZADAĆA (po potrebi)
+Zadatak: [konkretno]
+Uputstvo: [konkretno]
+Rok i način predaje: [konkretno]
+Vrednovanje: [konkretno]
+
+XI - INSTRUKCIJE ZA PROŠIRENJE ZNANJA (po potrebi)
+Dodatna literatura: [konkretno, autori sa našeg govornog područja]
+Online resursi: [konkretno] Uvijek uključi i sljedeći link kao dodatni resurs: https://sites.google.com/view/e-prilog/naslovna
+Praktične aktivnosti: [konkretno]
+Napomene za naredni čas: [konkretno]`;
+}
+
+const UPUTSTVA_PO_TIPU_CASA = {
+  'Obrada novog gradiva': 'UVODNI DIO: kratko ponavljanje prethodnog znanja kao osnova za novu temu, motivacija učenika za novu temu. GLAVNI DIO: postepeno uvođenje novih pojmova i sadržaja, jasno objašnjenje, konkretni primjeri, provjera razumijevanja tokom izlaganja (ne na kraju). ZAVRŠNI DIO: sistematizacija novousvojenog gradiva, kratka provjera da li je usvojeno. DOMAĆA ZADAĆA: vezana za utvrđivanje upravo obrađenog novog gradiva.',
+
+  'Ponavljanje i utvrđivanje gradiva': 'UVODNI DIO: podsjećanje na ključne pojmove prethodno obrađene teme/teme koje se ponavljaju. GLAVNI DIO: zadaci, vježbe i pitanja koja učvršćuju već obrađeno znanje - BEZ uvođenja bilo kakvih novih pojmova - rad na primjerima, rješavanje problemskih zadataka, diskusija, utvrđivanje. ZAVRŠNI DIO: provjera koliko je gradivo usvojeno kroz kraću provjeru znanja ili kviz.',
+
+  'Sistematizacija gradiva': 'UVODNI DIO: najava da se radi sveobuhvatan pregled cijele tematske cjeline ili više povezanih nastavnih jedinica. GLAVNI DIO: povezivanje i uporedni pregled više prethodno obrađenih jedinica, korištenje tabela, šema ili mapa uma, isticanje veza i odnosa između pojmova iz cijele cjeline - BEZ obrade novog gradiva. ZAVRŠNI DIO: cjelovit rezime cijele tematske cjeline, priprema učenika za predstojeću provjeru znanja.',
+
+  'Ispitivanje i ocjenjivanje učenika': 'UVODNI DIO: kratko objašnjenje načina provjere (usmeno/pismeno/test) i kriterijuma - BEZ obrade ili ponavljanja gradiva. GLAVNI DIO: isključivo konkretni zadaci za provjeru znanja (pitanja, testovi, usmeno ispitivanje) sa jasno definisanim kriterijumima ocjenjivanja - NEMA predavanja niti novih objašnjenja gradiva tokom časa. ZAVRŠNI DIO: davanje povratne informacije učenicima, najava načina i roka objavljivanja ocjena. DODATNO: sekcija IX - VREDNOVANJE mora biti znatno detaljnija nego kod ostalih tipova časa, sa jasnim, mjerljivim kriterijumima ocjenjivanja po elementima/zadacima.',
+
+  'Uvodni čas': 'UVODNI DIO: upoznavanje sa novom temom/predmetom (i nastavnikom ako je prvi čas u školskoj godini), objašnjenje plana rada za naredni period, motivacija učenika. GLAVNI DIO: opšti pregled onoga što će se raditi u narednom periodu, osnovni pojmovi bez dubinske obrade, dogovor o načinu rada, obavezama i načinu ocjenjivanja tokom školske godine/polugodišta. ZAVRŠNI DIO: prostor za pitanja učenika, najava naredne konkretne teme.',
+
+  'Kombinovani čas sa vježbama': 'UVODNI DIO: kratko podsjećanje na relevantnu teoriju/prethodno znanje. GLAVNI DIO: naizmjenična kombinacija kraćeg teorijskog dijela i praktičnih vježbi/zadataka primjene odmah nakon svakog teorijskog segmenta (teorija-praksa-teorija-praksa, a ne odvojeno sve teorija pa sve vježbe). ZAVRŠNI DIO: pregled urađenih vježbi, zajednička ispravka grešaka.'
+};
+
+function korisnickiPrompt() {
+  const predmet = el('predmet').value.trim() || '(nije uneseno)';
+  const razred = el('razred').value.trim() || '(nije uneseno)';
+  const tema = el('tema').value.trim() || '(nije uneseno)';
+  const jedinica = el('jedinica').value.trim() || '(nije uneseno)';
+  const tipCasa = el('tipCasa').value;
+  const nastava = document.querySelector('input[name=nastava]:checked').value;
+  const trajanje = document.querySelector('input[name=trajanje]:checked').value;
+  const datumRealizacije = el('datumRealizacije').value || danasnjiDatum();
+
+  const uputstvoTip = UPUTSTVA_PO_TIPU_CASA[tipCasa]
+    ? `\n\nOBAVEZNO UPUTSTVO ZA TOK ČASA (sekcija VII) PREMA IZABRANOM TIPU ČASA "${tipCasa}":\n${UPUTSTVA_PO_TIPU_CASA[tipCasa]}`
+    : '';
+
+  const posebneNapomene = [];
+  if (el('napDetaljnije').checked) posebneNapomene.push(el('napDetaljnije').value);
+  if (el('napPitanja').checked) posebneNapomene.push(el('napPitanja').value);
+  if (el('napLinkovi').checked) posebneNapomene.push(el('napLinkovi').value);
+  const slobodno = el('napSlobodno').value.trim();
+  if (slobodno) posebneNapomene.push(slobodno);
+
+  const napomeneTekst = posebneNapomene.length
+    ? `\n\nPOSEBNE NAPOMENE ZA OVU PRIPREMU (obavezno primijeni, imaju prednost ako su u suprotnosti sa opštim uputstvom za tip časa):\n- ${posebneNapomene.join('\n- ')}`
+    : '';
+
+  return `Napravi pripremu za čas sa sljedećim podacima:
+Nastavni predmet: ${predmet}
+Razred i odjeljenje: ${razred}
+Nastavna tema: ${tema}
+Nastavna jedinica: ${jedinica}
+Tip časa: ${tipCasa}
+Nastava: ${nastava}
+Trajanje: ${trajanje}
+Datum izrade: ${danasnjiDatum()}
+Datum realizacije: ${datumRealizacije}${uputstvoTip}${napomeneTekst}`;
+}
+
+let razgovor = [];
+
+async function generisiPripremu() {
+  const apiKey = el('apiKey').value.trim();
+  const status = el('status');
+  const btn = el('generisi');
+
+  if (!apiKey) {
+    status.className = 'err';
+    status.textContent = 'Unesi Groq API ključ.';
+    return;
+  }
+  if (!el('predmet').value.trim() || !el('jedinica').value.trim()) {
+    status.className = 'err';
+    status.textContent = 'Unesi barem nastavni predmet i nastavnu jedinicu.';
+    return;
+  }
+
+  localStorage.setItem('groq_api_key', apiKey);
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Generišem...';
+  status.className = '';
+  status.textContent = '';
+  el('izvezWord').style.display = 'none';
+  el('izvezi').style.display = 'none';
+  el('nastavi').style.display = 'none';
+  el('rezultat-wrap').style.display = 'none';
+
+  razgovor = [
+    { role: 'system', content: sistemskiPrompt() },
+    { role: 'user', content: korisnickiPrompt() }
+  ];
+
+  try {
+    const { sadrzaj, isecen } = await pozoviGroq(apiKey);
+    el('rezultat').innerHTML = ispraviOsnovnePodatke(sadrzaj);
+    el('rezultat-wrap').style.display = 'block';
+    el('izvezWord').style.display = 'inline-block';
+    el('izvezi').style.display = 'inline-block';
+    el('izvezNivoi').style.display = 'inline-block';
+
+    if (isecen) {
+      el('nastavi').style.display = 'inline-block';
+      status.className = 'err';
+      status.textContent = 'Odgovor je isečen (predugačak). Klikni "Nastavi" da dovršim pripremu.';
+    } else {
+      status.className = 'ok';
+      status.textContent = 'Priprema je uspješno generisana.';
+    }
+    el('obrisi').style.display = 'inline-block';
+    el('rezultat-wrap').scrollIntoView({ behavior: 'smooth' });
+
+  } catch (err) {
+    status.className = 'err';
+    status.textContent = 'Greška: ' + err.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🌀 Generiši';
+  }
+}
+
+async function pozoviGroq(apiKey) {
+  const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + apiKey
+    },
+    body: JSON.stringify({
+      model: 'openai/gpt-oss-120b',
+      temperature: 0.6,
+      max_tokens: 5000,
+      messages: razgovor
+    })
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error('Groq API greška (' + response.status + '): ' + errText.slice(0, 300));
+  }
+
+  const data = await response.json();
+  const poruka = data.choices && data.choices[0] ? data.choices[0].message : null;
+  let sadrzaj = poruka ? poruka.content : '';
+  const finishReason = data.choices && data.choices[0] ? data.choices[0].finish_reason : '';
+
+  sadrzaj = sadrzaj.trim();
+  sadrzaj = sadrzaj.replace(/^```html/i, '').replace(/^```/,'').replace(/```$/,'').trim();
+
+  if (!sadrzaj) throw new Error('Prazan odgovor od modela.');
+
+  // sačuvaj u istoriju razgovora radi eventualnog nastavka
+  razgovor.push({ role: 'assistant', content: poruka.content });
+
+  return { sadrzaj: el('rezultat').innerHTML ? el('rezultat').innerHTML + sadrzaj : sadrzaj, isecen: finishReason === 'length' };
+}
+
+function regexEscape(str) {
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// Poslije generisanja, osnovne podatke (predmet, nastava, razred, tema, jedinica, tip časa)
+// zamjenjujemo TAČNO unesenim vrijednostima, jer AI model ponekad skrati tekst
+// (npr. napiše samo "IV" umjesto "IV (Četvrti)") - ovo to čini pouzdanim, bez obzira na model.
+function ispraviOsnovnePodatke(html) {
+  const parovi = [
+    ['Nastavni predmet', el('predmet').value.trim()],
+    ['Nastava', (document.querySelector('input[name="nastava"]:checked') || {}).value || ''],
+    ['Razred i odjeljenje', el('razred').value.trim()],
+    ['Nastavna tema', el('tema').value.trim()],
+    ['Nastavna jedinica', el('jedinica').value.trim()],
+    ['Tip časa', el('tipCasa').value.trim()]
+  ];
+
+  parovi.forEach(([labela, vrijednost]) => {
+    if (!vrijednost) return;
+    const regex = new RegExp('(<strong>\\s*' + regexEscape(labela) + '\\s*:?\\s*</strong>\\s*)([^<\\n]*)', 'i');
+    if (regex.test(html)) {
+      html = html.replace(regex, '$1' + vrijednost.replace(/\$/g, '$$$$'));
+    }
+  });
+
+  return html;
+}
+
+async function nastaviGenerisanje() {
+  const apiKey = el('apiKey').value.trim();
+  const status = el('status');
+  const btn = el('nastavi');
+
+  razgovor.push({ role: 'user', content: 'Nastavi tačno tamo gdje si stao, bez ponavljanja već napisanog teksta. Ne počinji iznova od naslova - samo se nadoveži na prekinutu rečenicu/sekciju.' });
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Nastavljam...';
+  status.className = '';
+  status.textContent = '';
+
+  try {
+    const { sadrzaj, isecen } = await pozoviGroq(apiKey);
+    el('rezultat').innerHTML = ispraviOsnovnePodatke(sadrzaj);
+
+    if (isecen) {
+      status.className = 'err';
+      status.textContent = 'Još uvijek isečeno - klikni "Nastavi" ponovo.';
+    } else {
+      btn.style.display = 'none';
+      status.className = 'ok';
+      status.textContent = 'Priprema je sada kompletna.';
+    }
+  } catch (err) {
+    status.className = 'err';
+    status.textContent = 'Greška: ' + err.message;
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '↻ Nastavi';
+  }
+}
+
+// ---------- Izvoz u pravi .docx (Word) fajl ----------
+
+function xmlEscape(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+// Rekurzivno skuplja "runove" teksta (sa bold/italic oznakama) iz jednog čvora
+function sakupiRunove(node, bold, italic, runovi) {
+  node.childNodes.forEach(child => {
+    if (child.nodeType === Node.TEXT_NODE) {
+      const txt = child.textContent;
+      if (txt) runovi.push({ text: txt, bold, italic });
+    } else if (child.nodeType === Node.ELEMENT_NODE) {
+      const tag = child.tagName.toLowerCase();
+      const novoBold = bold || tag === 'strong' || tag === 'b';
+      const novoItalic = italic || tag === 'em' || tag === 'i';
+      if (tag === 'br') {
+        runovi.push({ text: '\n', bold, italic, brk: true });
+      } else {
+        sakupiRunove(child, novoBold, novoItalic, runovi);
+      }
+    }
+  });
+}
+
+function runoviUXml(runovi) {
+  return runovi.map(r => {
+    if (r.brk) return '<w:r><w:br/></w:r>';
+    const rPr = (r.bold || r.italic)
+      ? '<w:rPr>' + (r.bold ? '<w:b/>' : '') + (r.italic ? '<w:i/>' : '') + '</w:rPr>'
+      : '';
+    return '<w:r>' + rPr + '<w:t xml:space="preserve">' + xmlEscape(r.text) + '</w:t></w:r>';
+  }).join('');
+}
+
+function paragrafXml(node, pStyle, numPr) {
+  const runovi = [];
+  sakupiRunove(node, false, false, runovi);
+  const pPrDijelovi = [];
+  if (pStyle) pPrDijelovi.push('<w:pStyle w:val="' + pStyle + '"/>');
+  if (numPr) pPrDijelovi.push(numPr);
+  const pPr = pPrDijelovi.length ? '<w:pPr>' + pPrDijelovi.join('') + '</w:pPr>' : '';
+  return '<w:p>' + pPr + runoviUXml(runovi) + '</w:p>';
+}
+
+// Pretvara HTML sadržaj #rezultat-a u niz Word paragrafa (XML)
+function htmlUDocxTijelo(container) {
+  let xml = '';
+
+  // Naslov na vrhu dokumenta, isto kao u PDF izvozu
+  xml += '<w:p><w:pPr><w:pStyle w:val="NaslovPripreme"/></w:pPr><w:r><w:t>PRIPREMA ZA NASTAVNI ČAS</w:t></w:r></w:p>';
+
+  container.childNodes.forEach(node => {
+    if (node.nodeType !== Node.ELEMENT_NODE) return;
+    const tag = node.tagName.toLowerCase();
+
+    if (tag === 'h2') {
+      xml += paragrafXml(node, 'Heading1');
+    } else if (tag === 'h3') {
+      xml += paragrafXml(node, 'Heading2');
+    } else if (tag === 'p') {
+      xml += paragrafXml(node, 'Normal');
+    } else if (tag === 'ul' || tag === 'ol') {
+      const numId = tag === 'ul' ? '1' : '2';
+      Array.from(node.children).forEach(li => {
+        if (li.tagName.toLowerCase() !== 'li') return;
+        const numPr = '<w:numPr><w:ilvl w:val="0"/><w:numId w:val="' + numId + '"/></w:numPr>';
+        xml += paragrafXml(li, 'ListParagraph', numPr);
+      });
+    } else {
+      // Fallback za bilo koji drugi element (npr. div) - tretiraj kao običan pasus
+      xml += paragrafXml(node, 'Normal');
+    }
+  });
+
+  return xml;
+}
+
+const DOCX_CONTENT_TYPES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+'<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+'<Default Extension="xml" ContentType="application/xml"/>' +
+'<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>' +
+'<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>' +
+'<Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/>' +
+'</Types>';
+
+const DOCX_RELS = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+'<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>' +
+'</Relationships>';
+
+const DOCX_DOCUMENT_RELS = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+'<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>' +
+'<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/>' +
+'</Relationships>';
+
+const DOCX_STYLES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+'<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
+'<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:sz w:val="22"/></w:rPr></w:rPrDefault></w:docDefaults>' +
+'<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:pPr><w:spacing w:after="140" w:line="276" w:lineRule="auto"/></w:pPr></w:style>' +
+'<w:style w:type="paragraph" w:styleId="NaslovPripreme"><w:name w:val="Naslov pripreme"/><w:basedOn w:val="Normal"/>' +
+'<w:pPr><w:jc w:val="center"/><w:spacing w:after="360"/></w:pPr>' +
+'<w:rPr><w:b/><w:sz w:val="32"/><w:color w:val="1E4D8B"/></w:rPr></w:style>' +
+'<w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/>' +
+'<w:pPr><w:spacing w:before="280" w:after="140"/><w:border><w:bottom w:val="single" w:sz="6" w:space="4" w:color="1E4D8B"/></w:border></w:pPr>' +
+'<w:rPr><w:b/><w:sz w:val="26"/><w:color w:val="1E4D8B"/></w:rPr></w:style>' +
+'<w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:basedOn w:val="Normal"/>' +
+'<w:pPr><w:spacing w:before="200" w:after="100"/></w:pPr>' +
+'<w:rPr><w:b/><w:sz w:val="23"/><w:color w:val="333333"/></w:rPr></w:style>' +
+'<w:style w:type="paragraph" w:styleId="ListParagraph"><w:name w:val="List Paragraph"/><w:basedOn w:val="Normal"/>' +
+'<w:pPr><w:ind w:left="360"/><w:spacing w:after="80"/></w:pPr></w:style>' +
+'</w:styles>';
+
+const DOCX_NUMBERING = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+'<w:numbering xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
+'<w:abstractNum w:abstractNumId="0"><w:lvl w:ilvl="0"><w:start w:val="1"/><w:numFmt w:val="bullet"/><w:lvlText w:val="•"/><w:lvlJc w:val="left"/>' +
+'<w:pPr><w:ind w:left="720" w:hanging="360"/></w:pPr><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:hint="default"/></w:rPr></w:lvl></w:abstractNum>' +
+'<w:abstractNum w:abstractNumId="1"><w:lvl w:ilvl="0"><w:start w:val="1"/><w:numFmt w:val="decimal"/><w:lvlText w:val="%1."/><w:lvlJc w:val="left"/>' +
+'<w:pPr><w:ind w:left="720" w:hanging="360"/></w:pPr></w:lvl></w:abstractNum>' +
+'<w:num w:numId="1"><w:abstractNumId w:val="0"/></w:num>' +
+'<w:num w:numId="2"><w:abstractNumId w:val="1"/></w:num>' +
+'</w:numbering>';
+
+function nazivFajla() {
+  const predmet = (el('predmet') && el('predmet').value || '').trim();
+  const jedinica = (el('jedinica') && el('jedinica').value || '').trim();
+  let osnova = [predmet, jedinica].filter(Boolean).join('_') || 'priprema';
+  osnova = osnova
+    .replace(/[\\/:*?"<>|]/g, '')
+    .replace(/\s+/g, '_')
+    .slice(0, 80);
+  return 'Priprema_' + osnova + '.docx';
+}
+
+async function izvezUWord() {
+  const status = el('status');
+  const btn = el('izvezWord');
+  const originalHtml = btn.innerHTML;
+
+  if (typeof JSZip === 'undefined') {
+    status.className = 'err';
+    status.textContent = 'Greška: biblioteka za izvoz u Word nije učitana (provjeri internet konekciju).';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Pripremam Word fajl...';
+  status.className = '';
+  status.textContent = '';
+
+  try {
+    const tijeloXml = htmlUDocxTijelo(el('rezultat'));
+
+    const documentXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
+      '<w:body>' + tijeloXml +
+      '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/>' +
+      '<w:pgMar w:top="1417" w:right="1417" w:bottom="1417" w:left="1417" w:header="708" w:footer="708" w:gutter="0"/>' +
+      '</w:sectPr></w:body></w:document>';
+
+    const zip = new JSZip();
+    zip.file('[Content_Types].xml', DOCX_CONTENT_TYPES);
+    zip.folder('_rels').file('.rels', DOCX_RELS);
+    zip.folder('word').file('document.xml', documentXml);
+    zip.folder('word').file('styles.xml', DOCX_STYLES);
+    zip.folder('word').file('numbering.xml', DOCX_NUMBERING);
+    zip.folder('word/_rels').file('document.xml.rels', DOCX_DOCUMENT_RELS);
+
+    const blob = await zip.generateAsync({
+      type: 'blob',
+      mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    });
+
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = nazivFajla();
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+
+    status.className = 'ok';
+    status.textContent = 'Word dokument (.docx) je preuzet.';
+  } catch (err) {
+    status.className = 'err';
+    status.textContent = 'Greška pri izvozu u Word: ' + err.message;
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalHtml;
+  }
+}
+
+async function pitajAI() {
+  const status = el('status');
+  const predmet = (el('predmet') && el('predmet').value || '').trim();
+  const razred = (el('razred') && el('razred').value || '').trim();
+  const tema = (el('tema') && el('tema').value || '').trim();
+  const jedinica = (el('jedinica') && el('jedinica').value || '').trim();
+
+  if (!tema && !jedinica) {
+    status.className = 'err';
+    status.textContent = 'Unesi barem nastavnu temu ili jedinicu prije nego što tražiš proširenje teme.';
+    return;
+  }
+
+  let upit = 'Napiši kratak dodatni tekst (pasus ili dva) koji proširuje sljedeću nastavnu temu, kao dopunski materijal za čas iz predmeta ' + (predmet || '[predmet]');
+  if (razred) upit += ', razred ' + razred;
+  upit += '.\nNastavna tema: ' + (tema || '-');
+  upit += '\nNastavna jedinica: ' + (jedinica || '-');
+  upit += '\n\nNeka tekst bude sadržajan i primjenjiv u nastavi (npr. dodatno objašnjenje, zanimljivost, primjer iz prakse ili savremeni kontekst) - ne treba cijela priprema časa, samo prošireni tekst o temi.';
+  upit += '\n\nKonkretno mi treba: ';
+
+  try {
+    await navigator.clipboard.writeText(upit);
+    status.className = 'ok';
+    status.textContent = 'Upit za proširenje teme je kopiran u clipboard - Pitaj AI';
+  } catch (err) {
+    status.className = 'err';
+    status.textContent = 'Nije uspjelo automatsko kopiranje. Kopiraj ručno: ' + upit;
+  }
+
+  window.open('https://gemini.google.com/', '_blank');
+}
+
+// ---------- Direktna sinhronizacija sa appom "Nivoi znanja" (preko localStorage) ----------
+// Napomena: ovo radi pouzdano kad su oba appa hostovana na istom originu (npr. GitHub Pages).
+// Naziv drugog fajla - promijeni ovdje ako ga preimenuješ na GitHubu.
+const NIVOI_APP_URL = 'G_nivoi_znanja_V1_0.html';
+const NIVOI_STORAGE_KLJUC = 'gpriprema_zadnja_priprema';
+
+function sacuvajZaNivoe() {
+  const podaci = {
+    izvor: 'G_priprema',
+    verzija: 1,
+    predmet: (el('predmet') && el('predmet').value || '').trim(),
+    razred: (el('razred') && el('razred').value || '').trim(),
+    tema: (el('tema') && el('tema').value || '').trim(),
+    jedinica: (el('jedinica') && el('jedinica').value || '').trim(),
+    tipCasa: (el('tipCasa') && el('tipCasa').value || '').trim(),
+    datumIzrade: danasnjiDatum(),
+    vrijemeIzrade: Date.now(),
+    sadrzajHtml: el('rezultat').innerHTML,
+    sadrzajTekst: el('rezultat').innerText
+  };
+  try {
+    localStorage.setItem(NIVOI_STORAGE_KLJUC, JSON.stringify(podaci));
+  } catch (err) {
+    console.warn('Nije uspjelo automatsko čuvanje za app Nivoi znanja:', err);
+  }
+}
+
+function otvoriNivoeZnanja() {
+  const status = el('status');
+  try {
+    sacuvajZaNivoe();
+    window.open(NIVOI_APP_URL, '_blank');
+    status.className = 'ok';
+    status.textContent = 'Priprema je proslijeđena app-u "Nivoi znanja" - otvoren je u novoj kartici.';
+  } catch (err) {
+    status.className = 'err';
+    status.textContent = 'Greška pri otvaranju app-a Nivoi znanja: ' + err.message;
+  }
+}
+
+function obrisiPripremu() {
+  el('rezultat').innerHTML = '';
+  el('rezultat-wrap').style.display = 'none';
+  el('izvezWord').style.display = 'none';
+  el('izvezi').style.display = 'none';
+  el('izvezNivoi').style.display = 'none';
+  el('nastavi').style.display = 'none';
+  el('obrisi').style.display = 'none';
+  el('status').className = '';
+  el('status').textContent = '';
+  razgovor = [];
+
+  // resetuj polja za unos radi nove pripreme
+  el('tema').value = '';
+  el('jedinica').value = '';
+  el('napDetaljnije').checked = false;
+  el('napPitanja').checked = false;
+  el('napLinkovi').checked = false;
+  el('napSlobodno').value = '';
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
