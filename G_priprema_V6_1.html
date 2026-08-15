@@ -300,6 +300,7 @@
     <button id="izvezWord" onclick="izvezUWord()">💾 Word</button>
     <button id="izvezi" onclick="window.print()">📤 PDF</button>
     <button id="izvezNivoi" onclick="otvoriNivoeZnanja()" style="display:none; background:#e8edf5; color:var(--plava);">📖 Otvori Lekciju</button>
+    <button id="izvezJson" onclick="izvezJsonRezerva()" style="display:none; background:#eef1f6; color:#556;">💾 JSON (rezerva)</button>
     <button id="obrisi" onclick="obrisiPripremu()" style="display:none; background:linear-gradient(135deg, #2f6bb5 0%, #1e4d8b 100%); color:#fff;">🆕 Nova</button>
     <button id="pitajAI" onclick="pitajAI()">🤖 Proširi temu</button>
   </div>
@@ -531,6 +532,7 @@ async function generisiPripremu() {
     el('izvezWord').style.display = 'inline-block';
     el('izvezi').style.display = 'inline-block';
     el('izvezNivoi').style.display = 'inline-block';
+    el('izvezJson').style.display = 'inline-block';
 
     if (isecen) {
       el('nastavi').style.display = 'inline-block';
@@ -886,8 +888,8 @@ async function pitajAI() {
 const NIVOI_APP_URL = 'G_lekcija_V1_0.html';
 const NIVOI_STORAGE_KLJUC = 'gpriprema_zadnja_priprema';
 
-function sacuvajZaNivoe() {
-  const podaci = {
+function izgradiPodatkeZaNivoe() {
+  return {
     izvor: 'G_priprema',
     verzija: 1,
     predmet: (el('predmet') && el('predmet').value || '').trim(),
@@ -900,8 +902,11 @@ function sacuvajZaNivoe() {
     sadrzajHtml: el('rezultat').innerHTML,
     sadrzajTekst: el('rezultat').innerText
   };
+}
+
+function sacuvajZaNivoe() {
   try {
-    localStorage.setItem(NIVOI_STORAGE_KLJUC, JSON.stringify(podaci));
+    localStorage.setItem(NIVOI_STORAGE_KLJUC, JSON.stringify(izgradiPodatkeZaNivoe()));
   } catch (err) {
     console.warn('Nije uspjelo automatsko čuvanje za app Lekcija:', err);
   }
@@ -920,12 +925,37 @@ function otvoriNivoeZnanja() {
   }
 }
 
+// Rezervni izvoz .json fajla - za slučaj da automatsko prepoznavanje (localStorage)
+// ne uspije u app-u Lekcija (npr. drugi browser/uređaj) - tamo se fajl učita ručno.
+function izvezJsonRezerva() {
+  const status = el('status');
+  try {
+    const podaci = izgradiPodatkeZaNivoe();
+    const blob = new Blob([JSON.stringify(podaci, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    let osnova = [podaci.predmet, podaci.jedinica].filter(Boolean).join('_') || 'priprema';
+    osnova = osnova.replace(/[\\/:*?"<>|]/g, '').replace(/\s+/g, '_').slice(0, 80);
+    a.download = 'ZaLekciju_' + osnova + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+    status.className = 'ok';
+    status.textContent = 'JSON fajl je preuzet - učitaj ga ručno u app "Lekcija" ako automatsko prepoznavanje ne radi.';
+  } catch (err) {
+    status.className = 'err';
+    status.textContent = 'Greška pri izvozu JSON-a: ' + err.message;
+  }
+}
+
 function obrisiPripremu() {
   el('rezultat').innerHTML = '';
   el('rezultat-wrap').style.display = 'none';
   el('izvezWord').style.display = 'none';
   el('izvezi').style.display = 'none';
   el('izvezNivoi').style.display = 'none';
+  el('izvezJson').style.display = 'none';
   el('nastavi').style.display = 'none';
   el('obrisi').style.display = 'none';
   el('status').className = '';

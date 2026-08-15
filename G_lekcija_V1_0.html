@@ -195,7 +195,7 @@
 <body>
 <div class="wrap">
   <h1>Lekcija za učenike</h1>
-  <div class="podnaslov">Iz pripreme za nastavni čas piše se tekst za učenike - dužina se automatski prilagođava razredu (I-IV), a jezikom prilagođenim njihovom uzrastu. Koristi platformu Groq AI.</div>
+  <div class="podnaslov">Iz pripreme za nastavni čas piše tekst za učenike koji čitaju i uče - dužina se automatski prilagođava razredu (I-IV), jezikom prilagođenim njihovom uzrastu. Koristi platformu Groq AI.</div>
 
   <div class="panel">
     <h2>🔑 Groq API</h2>
@@ -227,6 +227,7 @@
     <button id="izvezWord" onclick="izvezUWord()">💾 Word</button>
     <button id="izvezi" onclick="window.print()">📤 PDF</button>
     <button id="izvezProvjera" onclick="otvoriProvjeru()">🎯 Provjera znanja</button>
+    <button id="izvezJson" onclick="izvezJsonRezerva()" style="display:none; background:#eef1f6; color:#556;">💾 JSON (rezerva)</button>
     <button id="obrisi" onclick="obrisiSve()">🆕 Nova priprema</button>
   </div>
   <div id="status"></div>
@@ -394,6 +395,7 @@ async function generisiLekciju() {
   el('izvezWord').style.display = 'none';
   el('izvezi').style.display = 'none';
   el('izvezProvjera').style.display = 'none';
+  el('izvezJson').style.display = 'none';
   el('rezultat-wrap').style.display = 'none';
 
   const naslov = 'LEKCIJA: ' + (ucitaniPodaci.jedinica || ucitaniPodaci.tema || '');
@@ -440,6 +442,7 @@ async function generisiLekciju() {
     el('izvezWord').style.display = 'inline-block';
     el('izvezi').style.display = 'inline-block';
     el('izvezProvjera').style.display = 'inline-block';
+    el('izvezJson').style.display = 'inline-block';
     el('obrisi').style.display = 'inline-block';
 
     generisaniTekst = sadrzaj;
@@ -465,6 +468,7 @@ function obrisiSve() {
   el('izvezWord').style.display = 'none';
   el('izvezi').style.display = 'none';
   el('izvezProvjera').style.display = 'none';
+  el('izvezJson').style.display = 'none';
   el('obrisi').style.display = 'none';
   el('infoBox').style.display = 'none';
   el('generisi').disabled = true;
@@ -478,26 +482,53 @@ function obrisiSve() {
 
 // ---------- Direktna sinhronizacija sa appom "Provjera znanja" (preko localStorage) ----------
 
+function izgradiPodatkeZaProvjeru() {
+  return {
+    izvor: 'G_lekcija',
+    verzija: 1,
+    predmet: (ucitaniPodaci && ucitaniPodaci.predmet || ''),
+    razred: (ucitaniPodaci && ucitaniPodaci.razred || ''),
+    tema: (ucitaniPodaci && ucitaniPodaci.tema || ''),
+    jedinica: (ucitaniPodaci && ucitaniPodaci.jedinica || ''),
+    tekstLekcijeHtml: el('rezultat').innerHTML,
+    tekstLekcijeText: el('rezultat').innerText
+  };
+}
+
 function otvoriProvjeru() {
   const status = el('status');
   try {
-    const podaci = {
-      izvor: 'G_lekcija',
-      verzija: 1,
-      predmet: (ucitaniPodaci && ucitaniPodaci.predmet || ''),
-      razred: (ucitaniPodaci && ucitaniPodaci.razred || ''),
-      tema: (ucitaniPodaci && ucitaniPodaci.tema || ''),
-      jedinica: (ucitaniPodaci && ucitaniPodaci.jedinica || ''),
-      tekstLekcijeHtml: el('rezultat').innerHTML,
-      tekstLekcijeText: el('rezultat').innerText
-    };
-    localStorage.setItem(PROVJERA_STORAGE_KLJUC, JSON.stringify(podaci));
+    localStorage.setItem(PROVJERA_STORAGE_KLJUC, JSON.stringify(izgradiPodatkeZaProvjeru()));
     window.open(PROVJERA_APP_URL, '_blank');
     status.className = 'ok';
     status.textContent = 'Lekcija je proslijeđena app-u "Provjera znanja" - otvoren je u novoj kartici.';
   } catch (err) {
     status.className = 'err';
     status.textContent = 'Greška pri otvaranju app-a Provjera znanja: ' + err.message;
+  }
+}
+
+// Rezervni izvoz .json fajla - za slučaj da automatsko prepoznavanje (localStorage)
+// ne uspije u app-u Provjera znanja (npr. drugi browser/uređaj) - tamo se fajl učita ručno.
+function izvezJsonRezerva() {
+  const status = el('status');
+  try {
+    const podaci = izgradiPodatkeZaProvjeru();
+    const blob = new Blob([JSON.stringify(podaci, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    let osnova = [podaci.predmet, podaci.jedinica].filter(Boolean).join('_') || 'lekcija';
+    osnova = osnova.replace(/[\\/:*?"<>|]/g, '').replace(/\s+/g, '_').slice(0, 80);
+    a.download = 'ZaProvjeru_' + osnova + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+    status.className = 'ok';
+    status.textContent = 'JSON fajl je preuzet - učitaj ga ručno u app "Provjera znanja" ako automatsko prepoznavanje ne radi.';
+  } catch (err) {
+    status.className = 'err';
+    status.textContent = 'Greška pri izvozu JSON-a: ' + err.message;
   }
 }
 
