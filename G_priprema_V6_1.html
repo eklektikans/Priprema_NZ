@@ -298,9 +298,9 @@
     <button id="generisi" onclick="generisiPripremu()">🌀 Generiši</button>
     <button id="nastavi" onclick="nastaviGenerisanje()" style="display:none; background:#c77b00; color:#fff;">↻ Nastavi</button>
     <button id="izvezWord" onclick="izvezUWord()">💾 Word</button>
-    <button id="izvezi" onclick="window.print()">📤 Print/PDF</button>
-    <button id="izvezNivoi" onclick="otvoriNivoeZnanja()" style="display:none; background:#e8edf5; color:var(--plava);">🎯 Nivo znanja</button>
-    <button id="obrisi" onclick="obrisiPripremu()" style="display:none; background:linear-gradient(135deg, #2f6bb5 0%, #1e4d8b 100%); color:#fff;">🆕 Nova priprema</button>
+    <button id="izvezi" onclick="window.print()">📤 PDF</button>
+    <button id="izvezNivoi" onclick="otvoriNivoeZnanja()" style="display:none; background:#e8edf5; color:var(--plava);">📖 Otvori Lekciju</button>
+    <button id="obrisi" onclick="obrisiPripremu()" style="display:none; background:linear-gradient(135deg, #2f6bb5 0%, #1e4d8b 100%); color:#fff;">🆕 Nova</button>
     <button id="pitajAI" onclick="pitajAI()">🤖 Proširi temu</button>
   </div>
   <div id="status"></div>
@@ -880,10 +880,10 @@ async function pitajAI() {
   window.open('https://gemini.google.com/', '_blank');
 }
 
-// ---------- Direktna sinhronizacija sa appom "Nivoi znanja" (preko localStorage) ----------
+// ---------- Direktna sinhronizacija sa appom "Lekcija" (preko localStorage) ----------
 // Napomena: ovo radi pouzdano kad su oba appa hostovana na istom originu (npr. GitHub Pages).
 // Naziv drugog fajla - promijeni ovdje ako ga preimenuješ na GitHubu.
-const NIVOI_APP_URL = 'G_nivoi_znanja_V1_0.html';
+const NIVOI_APP_URL = 'G_lekcija_V1_0.html';
 const NIVOI_STORAGE_KLJUC = 'gpriprema_zadnja_priprema';
 
 function sacuvajZaNivoe() {
@@ -903,7 +903,7 @@ function sacuvajZaNivoe() {
   try {
     localStorage.setItem(NIVOI_STORAGE_KLJUC, JSON.stringify(podaci));
   } catch (err) {
-    console.warn('Nije uspjelo automatsko čuvanje za app Nivoi znanja:', err);
+    console.warn('Nije uspjelo automatsko čuvanje za app Lekcija:', err);
   }
 }
 
@@ -913,10 +913,10 @@ function otvoriNivoeZnanja() {
     sacuvajZaNivoe();
     window.open(NIVOI_APP_URL, '_blank');
     status.className = 'ok';
-    status.textContent = 'Priprema je proslijeđena app-u "Nivoi znanja" - otvoren je u novoj kartici.';
+    status.textContent = 'Priprema je proslijeđena app-u "Lekcija" - otvoren je u novoj kartici.';
   } catch (err) {
     status.className = 'err';
-    status.textContent = 'Greška pri otvaranju app-a Nivoi znanja: ' + err.message;
+    status.textContent = 'Greška pri otvaranju app-a Lekcija: ' + err.message;
   }
 }
 

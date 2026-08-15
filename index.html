@@ -21,7 +21,7 @@
     padding: 24px;
     color: #222;
   }
-  .wrap { max-width: 800px; margin: 60px auto; }
+  .wrap { max-width: 900px; margin: 60px auto; }
   h1 {
     background: linear-gradient(90deg, var(--plava) 0%, var(--plava-svijetla) 100%);
     -webkit-background-clip: text;
@@ -46,11 +46,11 @@
   }
   .kartica {
     flex: 1;
-    min-width: 260px;
+    min-width: 240px;
     background: #fff;
     border: 1px solid var(--border);
     border-radius: 14px;
-    padding: 28px 26px;
+    padding: 28px 24px;
     text-decoration: none;
     color: inherit;
     box-shadow: 0 2px 6px rgba(30, 77, 139, 0.06), 0 8px 24px rgba(30, 77, 139, 0.05);
@@ -63,7 +63,7 @@
   }
   .kartica .ikona { font-size: 30px; margin-bottom: 12px; display: block; }
   .kartica h2 {
-    font-size: 17px;
+    font-size: 16.5px;
     color: var(--plava);
     margin: 0 0 8px 0;
   }
@@ -80,7 +80,12 @@
     font-weight: 600;
     color: var(--plava-svijetla);
   }
-
+  .redoslijed {
+    text-align: center;
+    font-size: 12.5px;
+    color: #889;
+    margin-top: 30px;
+  }
   @media (max-width: 640px) {
     .wrap { margin: 24px auto; }
     .kartice { flex-direction: column; }
@@ -90,8 +95,7 @@
 <body>
 <div class="wrap">
   <h1>Nastavni alati</h1>
-  <div class="podnaslov">Alati za generisanje priprema za nastavni čas i diferenciranih nivoa znanja, uz pomoć AI Groq platforme.</div>
-
+  <div class="podnaslov">Alati za generisanje priprema za nastavni čas, teksta lekcije za učenike i provjere znanja na tri nivoa, uz pomoć AI Groq platforme.</div>
   <div class="kartice">
     <a class="kartica" href="G_priprema_V6_1.html">
       <span class="ikona">📘</span>
@@ -99,14 +103,20 @@
       <p>Generiši kompletnu pripremu za čas prema propisanom obrascu, na osnovu unesenih podataka o predmetu, temi i tipu časa.</p>
       <span class="strelica">Otvori alat →</span>
     </a>
-
-    <a class="kartica" href="G_nivoi_znanja_V1_0.html">
+    <a class="kartica" href="G_lekcija_V1_0.html">
+      <span class="ikona">📖</span>
+      <h2>Lekcija za učenike</h2>
+      <p>Iz pripreme piše tekst lekcije koji učenici čitaju i uče - dužina se automatski prilagođava razredu, jezikom prilagođenim njihovom uzrastu.</p>
+      <span class="strelica">Otvori alat →</span>
+    </a>
+    <a class="kartica" href="G_provjera_znanja_V1_0.html">
       <span class="ikona">🎯</span>
-      <h2>Tri nivoa znanja za učenike</h2>
-      <p>Iz generisane pripreme automatski izdvaja sadržaj na tri nivoa težine za učenike - niži, srednji i viši (Bloomova taksonomija).</p>
+      <h2>Provjera znanja - tri nivoa</h2>
+      <p>Iz teksta lekcije sastavlja pitanja i zadatke za provjeru znanja na tri nivoa težine - niži, srednji i viši (Bloomova taksonomija).</p>
       <span class="strelica">Otvori alat →</span>
     </a>
   </div>
+  <div class="redoslijed">Redoslijed rada: Priprema → Lekcija → Provjera znanja (svaki alat automatski prepoznaje prethodni korak)</div>
 </div>
 </body>
 </html>
