@@ -402,14 +402,14 @@ async function generisiLekciju() {
   el('naslovPripreme').textContent = naslov;
 
   const raspon = rasponRijeciZaRazred(ucitaniPodaci.razred);
-  const maxTokena = Math.round(raspon.max * 2.3) + 400; // rezerva za HTML oznake i ključne pojmove
+  const maxTokena = Math.round(raspon.max * 2.3) + 1600; // rezerva za HTML oznake, ključne pojmove i reasoning tokene (gpt-oss)
 
   const razgovor = [
     { role: 'system', content: sistemskiPrompt(raspon) },
     { role: 'user', content: korisnickiPrompt(ucitaniPodaci, raspon) }
   ];
 
-  try {
+  async function pozoviGroq(limitTokena) {
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -419,7 +419,8 @@ async function generisiLekciju() {
       body: JSON.stringify({
         model: 'openai/gpt-oss-120b',
         temperature: 0.6,
-        max_tokens: maxTokena,
+        max_tokens: limitTokena,
+        reasoning_effort: 'low',
         messages: razgovor
       })
     });
@@ -430,12 +431,31 @@ async function generisiLekciju() {
     }
 
     const data = await response.json();
-    const poruka = data.choices && data.choices[0] ? data.choices[0].message : null;
-    let sadrzaj = poruka ? poruka.content : '';
+    const izbor = data.choices && data.choices[0] ? data.choices[0] : null;
+    const poruka = izbor ? izbor.message : null;
+    let sadrzaj = (poruka && poruka.content) ? poruka.content : '';
     sadrzaj = sadrzaj.trim();
     sadrzaj = sadrzaj.replace(/^```html/i, '').replace(/^```/, '').replace(/```$/, '').trim();
+    return { sadrzaj, finishReason: izbor ? izbor.finish_reason : null };
+  }
 
-    if (!sadrzaj) throw new Error('Prazan odgovor od modela.');
+  try {
+    let rez = await pozoviGroq(maxTokena);
+
+    // Ako je odgovor prazan zato što je model potrošio budžet tokena na
+    // interno razmišljanje (reasoning) prije nego što je stigao do teksta,
+    // pokušaj ponovo sa znatno većim limitom.
+    if (!rez.sadrzaj && rez.finishReason === 'length') {
+      status.textContent = 'Model je potrošio budžet na razmišljanje, pokušavam ponovo sa većim limitom...';
+      rez = await pozoviGroq(maxTokena + 3000);
+    }
+
+    const sadrzaj = rez.sadrzaj;
+
+    if (!sadrzaj) {
+      const razlog = rez.finishReason ? (' (finish_reason: ' + rez.finishReason + ')') : '';
+      throw new Error('Prazan odgovor od modela' + razlog + '. Pokušaj ponovo, ili provjeri da priprema nije prekratka/predugačka.');
+    }
 
     el('rezultat').innerHTML = sadrzaj;
     el('rezultat-wrap').style.display = 'block';
