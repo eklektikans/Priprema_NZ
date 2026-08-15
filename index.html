@@ -49,6 +49,7 @@
     min-width: 240px;
     background: #fff;
     border: 1px solid var(--border);
+    border-top: 4px solid var(--akcent);
     border-radius: 14px;
     padding: 28px 24px;
     text-decoration: none;
@@ -61,10 +62,20 @@
     box-shadow: 0 6px 16px rgba(30, 77, 139, 0.14);
     transform: translateY(-2px);
   }
-  .kartica .ikona { font-size: 30px; margin-bottom: 12px; display: block; }
+  .kartica .ikona {
+    font-size: 26px;
+    margin-bottom: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: var(--akcent-svijetla);
+  }
   .kartica h2 {
     font-size: 16.5px;
-    color: var(--plava);
+    color: var(--akcent);
     margin: 0 0 8px 0;
   }
   .kartica p {
@@ -78,8 +89,11 @@
     margin-top: 14px;
     font-size: 13px;
     font-weight: 600;
-    color: var(--plava-svijetla);
+    color: var(--akcent);
   }
+  .kartice .kartica:nth-child(1) { --akcent: #1e4d8b; --akcent-svijetla: #e4ecf9; }
+  .kartice .kartica:nth-child(2) { --akcent: #1e8b6f; --akcent-svijetla: #e3f5ef; }
+  .kartice .kartica:nth-child(3) { --akcent: #7a3fa0; --akcent-svijetla: #f1e7f8; }
   .redoslijed {
     text-align: center;
     font-size: 12.5px;
